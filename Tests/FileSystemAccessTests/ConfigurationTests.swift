@@ -192,7 +192,6 @@ struct ConfigurationTests { // swiftlint:disable:this type_body_length
     @Test
     func disabledRules() throws {
         let disabledConfig = try Configuration(dict: ["disabled_rules": ["nesting", "todo"]])
-
         #expect(disabledConfig.rulesWrapper.disabledRuleIdentifiers == ["nesting", "todo"],
                        "initializing Configuration with valid rules in Dictionary should succeed")
         let expectedIdentifiers = Set(RuleRegistry.shared.list.list.keys
