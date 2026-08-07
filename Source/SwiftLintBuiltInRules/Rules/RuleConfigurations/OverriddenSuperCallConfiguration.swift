@@ -10,6 +10,8 @@ struct OverriddenSuperCallConfiguration: SeverityBasedRuleConfiguration {
         "invalidateLayout()",
         "invalidateLayout(with:)",
         "invalidateLayoutWithContext(_:)",
+        // NSView
+        "updateTrackingAreas()",
         // UIView
         "prepareForReuse()",
         "updateConstraints()",
