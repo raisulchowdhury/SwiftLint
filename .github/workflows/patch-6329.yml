@@ -1,0 +1,36 @@
+name: Patch 6329 branch
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/patch-6329.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: oss/6329-isolation-modifier-order
+      - name: Reorder remaining modifier
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('Tests/FileSystemAccessTests/ConfigurationTests.swift')
+          text = path.read_text()
+          old = '    nonisolated(unsafe) private static let testRuleList = RuleList(rules: RuleWithLevelsMock.self)'
+          new = '    private nonisolated(unsafe) static let testRuleList = RuleList(rules: RuleWithLevelsMock.self)'
+          if text.count(old) != 1:
+              raise SystemExit(f'expected one match, found {text.count(old)}')
+          path.write_text(text.replace(old, new))
+          PY
+      - name: Commit and push
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add Tests/FileSystemAccessTests/ConfigurationTests.swift
+          git commit -m 'Apply new modifier order in configuration tests'
+          git push origin HEAD:oss/6329-isolation-modifier-order
