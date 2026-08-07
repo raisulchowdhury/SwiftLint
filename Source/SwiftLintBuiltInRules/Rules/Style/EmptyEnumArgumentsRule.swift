@@ -35,6 +35,7 @@ struct EmptyEnumArgumentsRule: Rule {
         nonTriggeringExamples: #examples([
             wrapInSwitch("case .bar"),
             wrapInSwitch("case .bar()"),
+            wrapInSwitch("case .bar() where method() > 2"),
             wrapInSwitch("case .bar(let x)"),
             wrapInSwitch("case let .bar(x)"),
             wrapInSwitch(variable: "(foo, bar)", "case (_, _)"),
@@ -47,6 +48,8 @@ struct EmptyEnumArgumentsRule: Rule {
             wrapInSwitch("default"),
             "if case .bar = foo {\n}",
             "guard case .bar = foo else {\n}",
+            "if case .bar() = foo {\n}",
+            "guard case .bar() = foo else {\n}",
             "if foo == .bar() {}",
             "guard foo == .bar() else { return }",
             """
@@ -66,13 +69,10 @@ struct EmptyEnumArgumentsRule: Rule {
         triggeringExamples: #examples([
             wrapInSwitch("case .bar↓(_)"),
             wrapInSwitch("case .bar↓(_), .bar2↓(_)"),
-            wrapInSwitch("case .bar↓() where method() > 2"),
             wrapInSwitch("case .bar(.baz↓(_))"),
             wrapInFunc("case .bar↓(_)"),
             "if case .bar↓(_) = foo {\n}",
             "guard case .bar↓(_) = foo else {\n}",
-            "if case .bar↓() = foo {\n}",
-            "guard case .bar↓() = foo else {\n}",
             """
             if case .appStore↓(_) = self.appInstaller, !UIDevice.isSimulator() {
                 viewController.present(self, animated: false)
@@ -90,7 +90,6 @@ struct EmptyEnumArgumentsRule: Rule {
         corrections: #corrections([
             wrapInSwitch("case .bar↓(_)"): wrapInSwitch("case .bar"),
             wrapInSwitch("case .bar↓(_), .bar2↓(_)"): wrapInSwitch("case .bar, .bar2"),
-            wrapInSwitch("case .bar↓() where method() > 2"): wrapInSwitch("case .bar where method() > 2"),
             wrapInSwitch("case .bar(.baz↓(_))"): wrapInSwitch("case .bar(.baz)"),
             wrapInFunc("case .bar↓(_)"): wrapInFunc("case .bar"),
             "if case .bar↓(_) = foo {": "if case .bar = foo {",
