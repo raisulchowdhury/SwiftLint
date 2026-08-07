@@ -2,7 +2,7 @@ import Foundation
 import SourceKittenFramework
 
 private let regexCacheLock = NSLock()
-nonisolated(unsafe) private var regexCache = [RegexCacheKey: NSRegularExpression]()
+private nonisolated(unsafe) var regexCache = [RegexCacheKey: NSRegularExpression]()
 
 public struct RegularExpression: Hashable, Comparable, ExpressibleByStringLiteral, Sendable {
     public let regex: NSRegularExpression
