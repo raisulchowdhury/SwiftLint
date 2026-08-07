@@ -34,3 +34,5 @@ jobs:
           git add Tests/FileSystemAccessTests/ConfigurationTests.swift
           git commit -m 'Apply new modifier order in configuration tests'
           git push origin HEAD:oss/6329-isolation-modifier-order
+
+# Trigger after workflow registration.
