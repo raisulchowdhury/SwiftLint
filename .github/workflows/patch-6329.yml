@@ -1,9 +1,8 @@
 name: Patch 6329 branch
 
 on:
-  pull_request:
+  push:
     branches: [main]
-    paths: [.github/trigger-6329]
 
 permissions:
   contents: write
