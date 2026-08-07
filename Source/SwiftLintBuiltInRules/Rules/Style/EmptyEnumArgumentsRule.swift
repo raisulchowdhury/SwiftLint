@@ -34,6 +34,7 @@ struct EmptyEnumArgumentsRule: Rule {
         kind: .style,
         nonTriggeringExamples: #examples([
             wrapInSwitch("case .bar"),
+            wrapInSwitch("case .bar()"),
             wrapInSwitch("case .bar(let x)"),
             wrapInSwitch("case let .bar(x)"),
             wrapInSwitch(variable: "(foo, bar)", "case (_, _)"),
@@ -42,6 +43,7 @@ struct EmptyEnumArgumentsRule: Rule {
             wrapInSwitch("case (let f as () -> String)?"),
             wrapInSwitch("case .bar(Baz())"),
             wrapInSwitch("case .bar(.init())"),
+            wrapInSwitch("case .bar(.baz())"),
             wrapInSwitch("default"),
             "if case .bar = foo {\n}",
             "guard case .bar = foo else {\n}",
@@ -63,10 +65,8 @@ struct EmptyEnumArgumentsRule: Rule {
         ]),
         triggeringExamples: #examples([
             wrapInSwitch("case .bar↓(_)"),
-            wrapInSwitch("case .bar↓()"),
             wrapInSwitch("case .bar↓(_), .bar2↓(_)"),
             wrapInSwitch("case .bar↓() where method() > 2"),
-            wrapInSwitch("case .bar(.baz↓())"),
             wrapInSwitch("case .bar(.baz↓(_))"),
             wrapInFunc("case .bar↓(_)"),
             "if case .bar↓(_) = foo {\n}",
@@ -89,10 +89,8 @@ struct EmptyEnumArgumentsRule: Rule {
         ]),
         corrections: #corrections([
             wrapInSwitch("case .bar↓(_)"): wrapInSwitch("case .bar"),
-            wrapInSwitch("case .bar↓()"): wrapInSwitch("case .bar"),
             wrapInSwitch("case .bar↓(_), .bar2↓(_)"): wrapInSwitch("case .bar, .bar2"),
             wrapInSwitch("case .bar↓() where method() > 2"): wrapInSwitch("case .bar where method() > 2"),
-            wrapInSwitch("case .bar(.baz↓())"): wrapInSwitch("case .bar(.baz)"),
             wrapInSwitch("case .bar(.baz↓(_))"): wrapInSwitch("case .bar(.baz)"),
             wrapInFunc("case .bar↓(_)"): wrapInFunc("case .bar"),
             "if case .bar↓(_) = foo {": "if case .bar = foo {",
@@ -170,9 +168,10 @@ private extension PatternSyntax {
 
 private extension FunctionCallExprSyntax {
     var argumentsHasViolation: Bool {
-        !calledExpression.is(DeclReferenceExprSyntax.self) &&
+        !arguments.isEmpty &&
+            !calledExpression.is(DeclReferenceExprSyntax.self) &&
             calledExpression.as(MemberAccessExprSyntax.self)?.isInit == false &&
-        arguments.allSatisfy(\.expression.isDiscardAssignmentOrFunction)
+            arguments.allSatisfy(\.expression.isDiscardAssignmentOrFunction)
     }
 
     var innermostFunctionCall: FunctionCallExprSyntax {
