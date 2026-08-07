@@ -202,7 +202,8 @@ private extension UnusedParameterRule {
                 if declarations.onlyElement == .lookupBoundary {
                     return
                 }
-                for declaration in declarations.reversed() where declaration.declares(id: id) {
+                for declaration in declarations.reversed()
+                    where declaration.declares(id: id) || declaration.declares(id: "$" + id) {
                     if referencedDeclarations.insert(declaration).inserted {
                         return
                     }
